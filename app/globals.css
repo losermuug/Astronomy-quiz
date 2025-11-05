@@ -2,6 +2,13 @@
           box-sizing: border-box;
           margin: 0;
           padding: 0;
+          cursor: none;
+        }
+
+        body {
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
         }
 
         .min-h-screen {
@@ -9,6 +16,45 @@
           background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
           position: relative;
           overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+
+        /* Custom cursor effects */
+        .cursor-glow {
+          position: fixed;
+          width: 400px;
+          height: 400px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(167, 139, 250, 0.15), transparent 70%);
+          pointer-events: none;
+          transform: translate(-50%, -50%);
+          z-index: 9999;
+          transition: all 0.1s ease;
+        }
+
+        .trail-dot {
+          position: fixed;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: radial-gradient(circle, #a78bfa, #ec4899);
+          pointer-events: none;
+          transform: translate(-50%, -50%);
+          z-index: 9998;
+          box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+          animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+          0% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+          }
+          100% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.3);
+          }
         }
 
         /* Starfield layers */
@@ -177,7 +223,7 @@
         .container {
           max-width: 800px;
           margin: 0 auto;
-          padding: 40px 20px;
+          padding: 0;
           position: relative;
           z-index: 10;
         }

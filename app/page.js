@@ -8,9 +8,37 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [spinning, setSpinning] = useState(false);
   const [askedQuestions, setAskedQuestions] = useState(new Set());
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [trail, setTrail] = useState([]);
 
   useEffect(() => {
     fetchQuestion();
+
+    const handleMouseMove = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+      
+      // Add trail point
+      const newPoint = { x: e.clientX, y: e.clientY, id: Date.now() };
+      setTrail(prev => {
+        const newTrail = [...prev, newPoint];
+        return newTrail.slice(-10); // Keep last 10 points
+      });
+    };
+
+    // Clear old trail points periodically
+    const trailCleanup = setInterval(() => {
+      setTrail(prev => {
+        const now = Date.now();
+        return prev.filter(point => now - point.id < 500); // Remove points older than 500ms
+      });
+    }, 100);
+
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearInterval(trailCleanup);
+    };
   }, []);
 
   const fetchQuestion = async () => {
@@ -45,6 +73,29 @@ export default function Home() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Mouse cursor glow effect */}
+      <div 
+        className="cursor-glow"
+        style={{
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`,
+        }}
+      />
+
+      {/* Mouse trail */}
+      {trail.map((point, index) => (
+        <div
+          key={point.id}
+          className="trail-dot"
+          style={{
+            left: `${point.x}px`,
+            top: `${point.y}px`,
+            opacity: (index + 1) / trail.length,
+            transform: `scale(${(index + 1) / trail.length})`,
+          }}
+        />
+      ))}
+
       {/* Animated starfield background */}
       <div className="stars-layer-1"></div>
       <div className="stars-layer-2"></div>
