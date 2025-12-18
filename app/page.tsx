@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react';
-import { Sparkles, Loader2, ArrowRight, Trophy, User } from 'lucide-react';
+import { Sparkles, Loader2, ArrowRight, Trophy, User, Edit2 } from 'lucide-react';
 
 interface QuestionOption {
   A: string;
@@ -44,6 +44,8 @@ export default function Home() {
   const [trail, setTrail] = useState<TrailPoint[]>([]);
   const [playerName, setPlayerName] = useState<string>('');
   const [showNameInput, setShowNameInput] = useState<boolean>(true);
+  const [showChangeName, setShowChangeName] = useState<boolean>(false);
+  const [newName, setNewName] = useState<string>('');
   const [score, setScore] = useState<number>(0);
   const [correctAnswers, setCorrectAnswers] = useState<number>(0);
   const [totalAnswered, setTotalAnswered] = useState<number>(0);
@@ -150,6 +152,22 @@ export default function Home() {
       localStorage.setItem('playerName', playerName.trim());
       setShowNameInput(false);
       fetchQuestion();
+    }
+  };
+
+  const handleChangeName = () => {
+    setNewName(playerName);
+    setShowChangeName(true);
+  };
+
+  const handleChangeNameSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newName.trim() && newName.trim() !== playerName) {
+      const trimmedName = newName.trim();
+      setPlayerName(trimmedName);
+      localStorage.setItem('playerName', trimmedName);
+      setShowChangeName(false);
+      setNewName('');
     }
   };
 
@@ -276,6 +294,42 @@ export default function Home() {
         </div>
       )}
 
+      {/* Change Name Modal */}
+      {showChangeName && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <User className="w-16 h-16 mx-auto mb-4 user-icon" />
+            <h2 className="modal-title">Нэр солих</h2>
+            <form onSubmit={handleChangeNameSubmit} className="name-form">
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Шинэ нэр..."
+                className="name-input"
+                autoFocus
+                maxLength={20}
+              />
+              <div className="modal-actions">
+                <button type="submit" className="action-btn primary" disabled={!newName.trim() || newName.trim() === playerName}>
+                  Хадгалах
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowChangeName(false);
+                    setNewName('');
+                  }} 
+                  className="action-btn secondary"
+                >
+                  Цуцлах
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Leaderboard Modal */}
       {showLeaderboard && (
         <div className="modal-overlay">
@@ -326,6 +380,13 @@ export default function Home() {
           <div className="player-info">
             <User className="w-5 h-5 inline-block mr-2" />
             <span>{playerName}</span>
+            <button 
+              onClick={handleChangeName}
+              className="change-name-btn"
+              title="Нэр солих"
+            >
+              <Edit2 className="change-name-icon" />
+            </button>
           </div>
           <div className="progress-display">
             <div className="progress-text">

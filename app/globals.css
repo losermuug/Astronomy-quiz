@@ -520,6 +520,31 @@
           font-size: 1.1rem;
           font-weight: 600;
           min-width: 120px;
+          gap: 0.5rem;
+        }
+
+        .change-name-btn {
+          background: rgba(96, 165, 250, 0.2);
+          border: 1px solid rgba(96, 165, 250, 0.3);
+          border-radius: 0.375rem;
+          padding: 0.25rem 0.5rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .change-name-btn:hover {
+          background: rgba(96, 165, 250, 0.3);
+          border-color: rgba(96, 165, 250, 0.5);
+          transform: scale(1.05);
+        }
+
+        .change-name-icon {
+          width: 0.875rem;
+          height: 0.875rem;
+          color: #60a5fa;
         }
 
         .progress-display {
