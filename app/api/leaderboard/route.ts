@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { kv } from '@vercel/kv';
+import redis from '@/lib/redis';
 
 interface LeaderboardEntry {
   name: string;
@@ -13,7 +13,8 @@ interface LeaderboardEntry {
 export async function GET() {
   try {
     // Get all leaderboard entries from Redis
-    const leaderboard = await kv.get<LeaderboardEntry[]>('leaderboard') || [];
+    const data = await redis.get('leaderboard');
+    const leaderboard: LeaderboardEntry[] = data ? JSON.parse(data) : [];
     
     // Sort by score (highest first)
     const sortedLeaderboard = leaderboard
@@ -38,7 +39,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Get current leaderboard
-    const leaderboard = await kv.get<LeaderboardEntry[]>('leaderboard') || [];
+    const data = await redis.get('leaderboard');
+    const leaderboard: LeaderboardEntry[] = data ? JSON.parse(data) : [];
 
     // Add new entry
     const newEntry: LeaderboardEntry = {
@@ -57,7 +59,7 @@ export async function POST(request: NextRequest) {
       .slice(0, 50);
 
     // Save back to Redis
-    await kv.set('leaderboard', sortedLeaderboard);
+    await redis.set('leaderboard', JSON.stringify(sortedLeaderboard));
 
     return NextResponse.json({ 
       success: true, 
@@ -73,7 +75,7 @@ export async function POST(request: NextRequest) {
 // DELETE - Leaderboard цэвэрлэх (admin only - optional)
 export async function DELETE() {
   try {
-    await kv.del('leaderboard');
+    await redis.del('leaderboard');
     return NextResponse.json({ success: true, message: 'Leaderboard цэвэрлэгдсэн' });
   } catch (error) {
     console.error('Error clearing leaderboard:', error);
