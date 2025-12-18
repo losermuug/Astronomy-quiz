@@ -19,7 +19,7 @@ export async function GET() {
     // Sort by score (highest first)
     const sortedLeaderboard = leaderboard
       .sort((a, b) => b.score - a.score)
-      .slice(0, 50); // Top 50
+      .slice(0, 10); // Top 50
 
     return NextResponse.json(sortedLeaderboard);
   } catch (error) {
